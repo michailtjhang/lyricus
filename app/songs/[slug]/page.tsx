@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Music, Clock, Calendar, ArrowLeft, Hash } from "lucide-react";
@@ -5,6 +8,7 @@ import Link from "next/link";
 import LyricBlock from "@/components/LyricBlock";
 import SongFlow from "@/components/SongFlow";
 import SongDetailActions from "@/components/SongDetailActions";
+import CopyLyricsButton from "@/components/CopyLyricsButton";
 import { TagBadge } from "@/components/SongCard";
 import type { SongWithDetails } from "@/types/song";
 
@@ -129,6 +133,7 @@ export default async function SongDetailPage({ params }: PageProps) {
               <p className="text-white/75 text-lg font-medium mb-6">{song.artist}</p>
 
               <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                <CopyLyricsButton title={song.title} artist={song.artist} sections={sortedSections} />
                 <SongDetailActions songId={song.id} songSlug={song.slug} songTitle={song.title} />
               </div>
             </div>

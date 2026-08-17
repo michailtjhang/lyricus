@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import Link from "next/link";
 import { ListMusic, Calendar, ChevronRight, Plus, Sparkles, Music } from "lucide-react";
 import type { PlaylistWithSongs } from "@/types/song";

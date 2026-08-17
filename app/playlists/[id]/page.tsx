@@ -21,6 +21,7 @@ import LyricBlock from "@/components/LyricBlock";
 import SongFlow from "@/components/SongFlow";
 import EditPlaylistModal from "@/components/EditPlaylistModal";
 import AuthModal from "@/components/AuthModal";
+import CopySetlistButton from "@/components/CopySetlistButton";
 import { isClientAuthenticated } from "@/lib/auth";
 import type { PlaylistWithSongs, LyricSection } from "@/types/song";
 
@@ -132,7 +133,9 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <CopySetlistButton playlistName={playlist.name} songs={playlist.playlistSongs || []} />
+
                 {authenticated && (
                   <button
                     onClick={handleOpenEditPlaylist}
@@ -143,12 +146,11 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                   </button>
                 )}
 
-
                 <button
                   onClick={() => setStageMode(true)}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition-all"
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-white/10 text-xs font-semibold shadow-md flex items-center gap-2 transition-all"
                 >
-                  <Maximize2 className="h-4 w-4" />
+                  <Maximize2 className="h-4 w-4 text-indigo-400" />
                   Mode Panggung (Stage View)
                 </button>
               </div>
