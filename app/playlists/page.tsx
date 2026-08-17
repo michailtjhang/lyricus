@@ -2,12 +2,60 @@ import Link from "next/link";
 import { ListMusic, Calendar, ChevronRight, Plus, Sparkles, Music } from "lucide-react";
 import type { PlaylistWithSongs } from "@/types/song";
 
+import { db } from "@/lib/db";
+
+function getPlaylistPriority(name: string): number {
+  const lower = name.toLowerCase();
+  if (lower.includes("natal")) return 3;
+  if (lower.includes("worship")) return 2;
+  if (lower.includes("ibadah")) return 1;
+  return 4;
+}
+
 async function getPlaylists(): Promise<PlaylistWithSongs[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/playlists`, { cache: "no-store" });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.playlists || [];
+  try {
+    const list = await db.query.playlists.findMany({
+      with: {
+        playlistSongs: {
+          with: {
+            song: {
+              with: {
+                songTags: {
+                  with: {
+                    tag: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: (ps, { asc }) => [asc(ps.orderIndex)],
+        },
+      },
+      orderBy: (p, { desc }) => [desc(p.createdAt)],
+    });
+
+    const formatted = list
+      .map((p) => ({
+        ...p,
+        playlistSongs: p.playlistSongs.map((ps) => ({
+          ...ps,
+          song: {
+            ...ps.song,
+            tags: ps.song.songTags.map((st) => st.tag),
+          },
+        })),
+      }))
+      .sort((a, b) => {
+        const priorityDiff = getPlaylistPriority(a.name) - getPlaylistPriority(b.name);
+        if (priorityDiff !== 0) return priorityDiff;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
+    return formatted as any[];
+  } catch (err) {
+    console.error("Error fetching playlists:", err);
+    return [];
+  }
 }
 
 export default async function PlaylistsPage() {

@@ -13,12 +13,37 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+import { db } from "@/lib/db";
+import { songs } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
+
 async function getSong(slug: string): Promise<SongWithDetails | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/songs/${slug}`, { cache: "no-store" });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.song || null;
+  try {
+    const song = await db.query.songs.findFirst({
+      where: eq(songs.slug, slug),
+      with: {
+        lyricSections: {
+          orderBy: (sec, { asc }) => [asc(sec.orderIndex)],
+        },
+        songTags: {
+          with: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    if (!song) return null;
+
+    return {
+      ...song,
+      tags: song.songTags.map((st) => st.tag),
+      lyricSections: song.lyricSections,
+    } as any;
+  } catch (err) {
+    console.error("Error fetching song detail:", err);
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

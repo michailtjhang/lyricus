@@ -10,19 +10,51 @@ interface PageProps {
   searchParams: Promise<{ q?: string; tag?: string; sort?: string }>;
 }
 
-async function getSongs(q?: string, tag?: string, sort?: string): Promise<SongCardType[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const params = new URLSearchParams();
-  if (q) params.set("q", q);
-  if (tag) params.set("tag", tag);
-  if (sort) params.set("sort", sort);
+import { songs as songsTable } from "@/drizzle/schema";
+import { asc, desc } from "drizzle-orm";
 
-  const res = await fetch(`${baseUrl}/api/songs?${params.toString()}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.songs || [];
+async function getSongs(q?: string, tag?: string, sort?: string): Promise<SongCardType[]> {
+  try {
+    const allSongs = await db.query.songs.findMany({
+      with: {
+        songTags: {
+          with: {
+            tag: true,
+          },
+        },
+        lyricSections: true,
+      },
+      orderBy: sort === "alpha" ? [asc(songsTable.title)] : [desc(songsTable.createdAt)],
+    });
+
+    let formatted = allSongs.map((s) => ({
+      ...s,
+      tags: s.songTags.map((st) => st.tag),
+    }));
+
+    if (q) {
+      const lowerQ = q.toLowerCase();
+      formatted = formatted.filter((s) => {
+        const titleMatch = s.title.toLowerCase().includes(lowerQ);
+        const artistMatch = s.artist.toLowerCase().includes(lowerQ);
+        const lyricMatch = s.lyricSections.some((sec) =>
+          sec.content.toLowerCase().includes(lowerQ)
+        );
+        return titleMatch || artistMatch || lyricMatch;
+      });
+    }
+
+    if (tag) {
+      formatted = formatted.filter((s) =>
+        s.tags.some((t) => t.name.toLowerCase() === tag.toLowerCase())
+      );
+    }
+
+    return formatted as SongCardType[];
+  } catch (err) {
+    console.error("Error fetching songs in Server Component:", err);
+    return [];
+  }
 }
 
 async function getAllTags(): Promise<Tag[]> {
