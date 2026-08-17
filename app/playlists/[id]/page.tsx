@@ -21,7 +21,7 @@ import LyricBlock from "@/components/LyricBlock";
 import SongFlow from "@/components/SongFlow";
 import EditPlaylistModal from "@/components/EditPlaylistModal";
 import AuthModal from "@/components/AuthModal";
-import CopySetlistButton from "@/components/CopySetlistButton";
+import CopyLyricsButton from "@/components/CopyLyricsButton";
 import { isClientAuthenticated } from "@/lib/auth";
 import type { PlaylistWithSongs, LyricSection } from "@/types/song";
 
@@ -133,9 +133,7 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <CopySetlistButton playlistName={playlist.name} songs={playlist.playlistSongs || []} />
-
+              <div className="flex items-center gap-2">
                 {authenticated && (
                   <button
                     onClick={handleOpenEditPlaylist}
@@ -267,7 +265,10 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
                           Lagu ke-{activeSongIndex + 1} dari {songsList.length}
                         </span>
-                        <h2 className="text-2xl sm:text-3xl font-bold text-white">{currentSong.title}</h2>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h2 className="text-2xl sm:text-3xl font-bold text-white">{currentSong.title}</h2>
+                          <CopyLyricsButton sections={currentSong.lyricSections || []} />
+                        </div>
                         <p className="text-sm text-slate-400 font-medium mt-0.5">{currentSong.artist}</p>
                       </div>
                     </div>

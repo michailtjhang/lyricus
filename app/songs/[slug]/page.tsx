@@ -127,13 +127,15 @@ export default async function SongDetailPage({ params }: PageProps) {
                 </div>
               )}
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 leading-tight">
-                {song.title}
-              </h1>
+              <div className="flex flex-wrap items-center gap-3 mb-2">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                  {song.title}
+                </h1>
+                <CopyLyricsButton sections={sortedSections} />
+              </div>
               <p className="text-white/75 text-lg font-medium mb-6">{song.artist}</p>
 
               <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-                <CopyLyricsButton title={song.title} artist={song.artist} sections={sortedSections} />
                 <SongDetailActions songId={song.id} songSlug={song.slug} songTitle={song.title} />
               </div>
             </div>
