@@ -7,10 +7,6 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Maximize2,
-  Minimize2,
-  ZoomIn,
-  ZoomOut,
   Loader2,
   ListMusic,
   Edit3,
@@ -34,8 +30,6 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
   const [loading, setLoading] = useState(true);
   const [activeSongIndex, setActiveSongIndex] = useState(0);
 
-  const [fontSize, setFontSize] = useState<"sm" | "base" | "lg" | "xl">("lg");
-  const [stageMode, setStageMode] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
@@ -103,91 +97,52 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
   };
 
   return (
-    <div className={`min-h-screen bg-slate-950 text-slate-100 ${stageMode ? "pb-32" : "pb-20"}`}>
+    <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
       {/* Top Banner (hidden in stage mode) */}
-      {!stageMode && (
-        <div className="border-b border-white/[0.06] bg-slate-900/70 backdrop-blur-md sticky top-16 z-30">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
-            <Link
-              href="/playlists"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white mb-3 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Kembali ke Playlist
-            </Link>
+      {/* Top Banner */}
+      <div className="border-b border-white/[0.06] bg-slate-900/70 backdrop-blur-md sticky top-16 z-30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
+          <Link
+            href="/playlists"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white mb-3 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Kembali ke Playlist
+          </Link>
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <ListMusic className="h-5 w-5 text-indigo-400" />
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white">{playlist.name}</h1>
-                </div>
-                <div className="flex items-center gap-4 text-xs text-slate-400">
-                  {playlist.eventDate && (
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5 text-indigo-400" />
-                      Tanggal Ibadah: <span className="text-white font-semibold">{playlist.eventDate}</span>
-                    </span>
-                  )}
-                  <span>• {songsList.length} Lagu</span>
-                </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <ListMusic className="h-5 w-5 text-indigo-400" />
+                <h1 className="text-2xl sm:text-3xl font-bold text-white">{playlist.name}</h1>
               </div>
-
-              <div className="flex items-center gap-2">
-                {authenticated && (
-                  <button
-                    onClick={handleOpenEditPlaylist}
-                    className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
-                  >
-                    <Edit3 className="h-4 w-4 text-amber-300" />
-                    Edit Playlist & Tanggal
-                  </button>
+              <div className="flex items-center gap-4 text-xs text-slate-400">
+                {playlist.eventDate && (
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                    Tanggal Ibadah: <span className="text-white font-semibold">{playlist.eventDate}</span>
+                  </span>
                 )}
-
-                <button
-                  onClick={() => setStageMode(true)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-white/10 text-xs font-semibold shadow-md flex items-center gap-2 transition-all"
-                >
-                  <Maximize2 className="h-4 w-4 text-indigo-400" />
-                  Mode Panggung (Stage View)
-                </button>
+                <span>• {songsList.length} Lagu</span>
               </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {authenticated && (
+                <button
+                  onClick={handleOpenEditPlaylist}
+                  className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+                >
+                  <Edit3 className="h-4 w-4 text-amber-300" />
+                  Edit Playlist & Tanggal
+                </button>
+              )}
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Stage Mode Header bar */}
-      {stageMode && (
-        <div className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 flex items-center justify-between">
-          <button
-            onClick={() => setStageMode(false)}
-            className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-semibold"
-          >
-            <Minimize2 className="h-4 w-4" /> Keluar Mode Panggung
-          </button>
 
-          {/* Font controls */}
-          <div className="flex items-center gap-2 bg-white/5 px-2.5 py-1 rounded-xl border border-white/10">
-            <span className="text-[10px] text-slate-400 font-semibold uppercase">Teks:</span>
-            <button
-              onClick={() => setFontSize(fontSize === "xl" ? "lg" : fontSize === "lg" ? "base" : "sm")}
-              className="p-1 text-slate-300 hover:text-white"
-              title="Kecilkan Teks"
-            >
-              <ZoomOut className="h-3.5 w-3.5" />
-            </button>
-            <span className="text-xs font-bold text-indigo-400 uppercase">{fontSize}</span>
-            <button
-              onClick={() => setFontSize(fontSize === "sm" ? "base" : fontSize === "base" ? "lg" : "xl")}
-              className="p-1 text-slate-300 hover:text-white"
-              title="Besarkan Teks"
-            >
-              <ZoomIn className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Two Column Layout: Left (Song List Top-to-Bottom) + Right (Lyrics Content) */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
@@ -263,7 +218,7 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] pb-4 mb-4">
                       <div>
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
-                          Lagu ke-{activeSongIndex + 1} dari {songsList.length}
+                          Lagu ke-{activeSongIndex + 1}
                         </span>
                         <div className="flex flex-wrap items-center gap-3">
                           <h2 className="text-2xl sm:text-3xl font-bold text-white">{currentSong.title}</h2>
@@ -322,21 +277,57 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
       </div>
 
       {/* Mobile Sticky Section Quick Jump Bar */}
-      {currentSong && currentSong.lyricSections && currentSong.lyricSections.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-t border-white/10 px-3 py-2.5 shadow-2xl">
-          <div className="mx-auto max-w-md flex items-center justify-center gap-1.5 overflow-x-auto">
-            {currentSong.lyricSections.map((sec: LyricSection) => (
-              <a
-                key={sec.id}
-                href={`#section-${sec.sectionLabel.toLowerCase().replace(/\s+/g, "-")}`}
-                className="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-white/5 hover:bg-indigo-500/20 text-slate-300 hover:text-indigo-300 border border-white/10 whitespace-nowrap transition-all"
-              >
-                {sec.sectionLabel}
-              </a>
-            ))}
+      {currentSong && currentSong.lyricSections && currentSong.lyricSections.length > 0 && (() => {
+        // Color palette for section types
+        const SECTION_PILL_COLORS: Record<string, string> = {
+          "intro": "bg-slate-600/40 text-slate-200 border-slate-500/40",
+          "verse 1": "bg-indigo-500/25 text-indigo-200 border-indigo-400/35",
+          "verse 2": "bg-blue-500/25 text-blue-200 border-blue-400/35",
+          "verse 3": "bg-cyan-500/25 text-cyan-200 border-cyan-400/35",
+          "verse 4": "bg-teal-500/25 text-teal-200 border-teal-400/35",
+          "chorus": "bg-sky-500/25 text-sky-200 border-sky-400/35",
+          "prechorus": "bg-violet-500/25 text-violet-200 border-violet-400/35",
+          "bridge": "bg-amber-500/25 text-amber-200 border-amber-400/35",
+          "interlude": "bg-slate-600/40 text-slate-200 border-slate-500/40",
+          "outro": "bg-rose-500/25 text-rose-200 border-rose-400/35",
+          "ending": "bg-rose-500/25 text-rose-200 border-rose-400/35",
+          "tag": "bg-emerald-500/25 text-emerald-200 border-emerald-400/35",
+        };
+
+        const getSectionColorKey = (label: string): string => {
+          const lower = label.toLowerCase().trim();
+          // For Verse: keep "verse 1", "verse 2" as separate keys
+          const verseMatch = lower.match(/^verse\s*(\d+)/);
+          if (verseMatch) return `verse ${verseMatch[1]}`;
+          // For others: strip "(2x)", "(3x)" etc. and trailing numbers
+          const base = lower.replace(/\s*\(\d+x\)\s*$/i, "").replace(/\s*\d+$/, "").trim();
+          return base;
+        };
+
+        const getPillColor = (label: string): string => {
+          const key = getSectionColorKey(label);
+          return SECTION_PILL_COLORS[key] || "bg-white/10 text-slate-300 border-white/15";
+        };
+
+        return (
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-t border-white/10 px-3 py-2.5 shadow-2xl">
+            <div className="mx-auto max-w-md">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mb-1.5 text-center">Alur Lagu</p>
+              <div className="flex items-center justify-center gap-1.5 overflow-x-auto">
+                {currentSong.lyricSections.map((sec: LyricSection) => (
+                  <a
+                    key={sec.id}
+                    href={`#section-${sec.sectionLabel.toLowerCase().replace(/\s+/g, "-")}`}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border whitespace-nowrap transition-all hover:scale-105 hover:shadow-md ${getPillColor(sec.sectionLabel)}`}
+                  >
+                    {sec.sectionLabel}
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Edit Playlist Modal */}
       <EditPlaylistModal

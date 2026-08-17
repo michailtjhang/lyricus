@@ -294,29 +294,82 @@ export default function EditSongPage({ params }: { params: Promise<{ slug: strin
             </div>
           </div>
 
-          {/* Tags Section */}
-          <div className="rounded-2xl border border-white/[0.08] bg-slate-900/60 p-6 space-y-3">
+          {/* Tags Section – Genre, Bahasa, Tema */}
+          <div className="rounded-2xl border border-white/[0.08] bg-slate-900/60 p-6 space-y-5">
             <h2 className="text-base font-semibold text-white border-b border-white/[0.06] pb-3">
-              2. Categorization & Tag
+              2. Genre, Bahasa &amp; Tema
             </h2>
-            <div className="flex flex-wrap gap-2">
-              {AVAILABLE_TAGS.map((tag) => {
-                const isSelected = selectedTags.includes(tag.name);
-                return (
-                  <button
-                    key={tag.name}
-                    type="button"
-                    onClick={() => handleToggleTag(tag.name)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                      isSelected
-                        ? "bg-indigo-500 text-white border-indigo-400 shadow-md shadow-indigo-500/20"
-                        : "bg-slate-950 text-slate-400 border-white/10 hover:text-slate-200"
-                    }`}
-                  >
-                    #{tag.name}
-                  </button>
-                );
-              })}
+
+            {/* Genre */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Genre</p>
+              <div className="flex flex-wrap gap-2">
+                {AVAILABLE_TAGS.filter((t) => t.category === "GENRE").map((tag) => {
+                  const isSelected = selectedTags.includes(tag.name);
+                  return (
+                    <button
+                      key={tag.name}
+                      type="button"
+                      onClick={() => handleToggleTag(tag.name)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                        isSelected
+                          ? "bg-indigo-500 text-white border-indigo-400 shadow-md shadow-indigo-500/20"
+                          : "bg-slate-950 text-slate-400 border-white/10 hover:text-slate-200"
+                      }`}
+                    >
+                      #{tag.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Bahasa */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Bahasa</p>
+              <div className="flex flex-wrap gap-2">
+                {AVAILABLE_TAGS.filter((t) => t.category === "LANGUAGE").map((tag) => {
+                  const isSelected = selectedTags.includes(tag.name);
+                  return (
+                    <button
+                      key={tag.name}
+                      type="button"
+                      onClick={() => handleToggleTag(tag.name)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                        isSelected
+                          ? "bg-sky-500 text-white border-sky-400 shadow-md shadow-sky-500/20"
+                          : "bg-slate-950 text-slate-400 border-white/10 hover:text-slate-200"
+                      }`}
+                    >
+                      #{tag.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Tema */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Tema</p>
+              <div className="flex flex-wrap gap-2">
+                {AVAILABLE_TAGS.filter((t) => t.category === "THEME").map((tag) => {
+                  const isSelected = selectedTags.includes(tag.name);
+                  return (
+                    <button
+                      key={tag.name}
+                      type="button"
+                      onClick={() => handleToggleTag(tag.name)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                        isSelected
+                          ? "bg-amber-500 text-white border-amber-400 shadow-md shadow-amber-500/20"
+                          : "bg-slate-950 text-slate-400 border-white/10 hover:text-slate-200"
+                      }`}
+                    >
+                      #{tag.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
