@@ -49,6 +49,7 @@ export const songTags = pgTable("song_tags", {
 export const playlists = pgTable("playlists", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).unique().notNull(),
   description: text("description"),
   eventDate: varchar("event_date", { length: 50 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),

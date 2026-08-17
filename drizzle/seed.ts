@@ -12,6 +12,7 @@ async function seed() {
   console.log("🌱 Seeding database...");
 
   console.log("  → Cleaning existing data...");
+  await sql.query("ALTER TABLE playlists ADD COLUMN IF NOT EXISTS slug VARCHAR(255) UNIQUE;");
   await sql.query("TRUNCATE TABLE songs, tags, playlists CASCADE;");
 
 
@@ -430,18 +431,21 @@ async function seed() {
 
   const [p1] = await db.insert(playlists).values({
     name: "Ibadah AbbaYouth",
+    slug: "ibadah-abbayouth",
     description: "Setlist ibadah mingguan AbbaYouth",
     eventDate: today,
   }).returning();
 
   const [p2] = await db.insert(playlists).values({
     name: "Ibadah Worship Night AbbaYouth",
+    slug: "ibadah-worship-night",
     description: "Setlist malam pujian dan penyembahan AbbaYouth",
     eventDate: today,
   }).returning();
 
   const [p3] = await db.insert(playlists).values({
     name: "Ibadah Natal AbbaYouth",
+    slug: "ibadah-natal",
     description: "Setlist perayaan Natal AbbaYouth",
     eventDate: today,
   }).returning();

@@ -37,7 +37,7 @@ export default async function PlaylistsPage() {
             return (
               <Link
                 key={pl.id}
-                href={`/playlists/${pl.id}`}
+                href={`/playlists/${pl.slug || pl.id}`}
                 className="group relative flex flex-col justify-between rounded-2xl border border-white/[0.08] bg-slate-900/60 p-6 backdrop-blur-sm hover:border-indigo-500/40 hover:bg-slate-800/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/10"
               >
                 <div>

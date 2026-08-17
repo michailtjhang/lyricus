@@ -54,6 +54,7 @@ export interface SongCard extends Song {
 export interface Playlist {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   eventDate: string | null;
   createdAt: Date;

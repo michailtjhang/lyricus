@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { playlists, playlistSongs } from "@/drizzle/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
+
+function getPlaylistWhereCondition(idOrSlug: string) {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+  return isUuid
+    ? or(eq(playlists.id, idOrSlug), eq(playlists.slug, idOrSlug))
+    : eq(playlists.slug, idOrSlug);
+}
 
 export async function GET(
   req: NextRequest,
@@ -11,7 +18,7 @@ export async function GET(
 
   try {
     const playlist = await db.query.playlists.findFirst({
-      where: eq(playlists.id, id),
+      where: getPlaylistWhereCondition(id),
       with: {
         playlistSongs: {
           with: {
@@ -63,6 +70,14 @@ export async function POST(
 ) {
   const { id } = await params;
   try {
+    const targetPlaylist = await db.query.playlists.findFirst({
+      where: getPlaylistWhereCondition(id),
+    });
+
+    if (!targetPlaylist) {
+      return NextResponse.json({ error: "Playlist not found" }, { status: 404 });
+    }
+
     const body = await req.json();
     const { songId } = body;
 
@@ -74,7 +89,7 @@ export async function POST(
     const existing = await db
       .select()
       .from(playlistSongs)
-      .where(eq(playlistSongs.playlistId, id));
+      .where(eq(playlistSongs.playlistId, targetPlaylist.id));
 
     const nextOrder = existing.length;
 
@@ -85,7 +100,7 @@ export async function POST(
     }
 
     await db.insert(playlistSongs).values({
-      playlistId: id,
+      playlistId: targetPlaylist.id,
       songId,
       orderIndex: nextOrder,
     });
@@ -111,9 +126,17 @@ export async function DELETE(
   }
 
   try {
+    const targetPlaylist = await db.query.playlists.findFirst({
+      where: getPlaylistWhereCondition(id),
+    });
+
+    if (!targetPlaylist) {
+      return NextResponse.json({ error: "Playlist not found" }, { status: 404 });
+    }
+
     await db
       .delete(playlistSongs)
-      .where(and(eq(playlistSongs.playlistId, id), eq(playlistSongs.songId, songId)));
+      .where(and(eq(playlistSongs.playlistId, targetPlaylist.id), eq(playlistSongs.songId, songId)));
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -129,6 +152,14 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
+    const targetPlaylist = await db.query.playlists.findFirst({
+      where: getPlaylistWhereCondition(id),
+    });
+
+    if (!targetPlaylist) {
+      return NextResponse.json({ error: "Playlist not found" }, { status: 404 });
+    }
+
     const body = await req.json();
     const { name, description, eventDate, songIds } = body;
 
@@ -140,15 +171,15 @@ export async function PUT(
         description: description !== undefined ? description : undefined,
         eventDate: eventDate !== undefined ? eventDate : undefined,
       })
-      .where(eq(playlists.id, id));
+      .where(eq(playlists.id, targetPlaylist.id));
 
     // Update song list order if songIds array provided
     if (Array.isArray(songIds)) {
-      await db.delete(playlistSongs).where(eq(playlistSongs.playlistId, id));
+      await db.delete(playlistSongs).where(eq(playlistSongs.playlistId, targetPlaylist.id));
       if (songIds.length > 0) {
         await db.insert(playlistSongs).values(
           songIds.map((sId: string, idx: number) => ({
-            playlistId: id,
+            playlistId: targetPlaylist.id,
             songId: sId,
             orderIndex: idx,
           }))

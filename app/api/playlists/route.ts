@@ -56,6 +56,16 @@ export async function GET() {
   }
 }
 
+function slugify(text: string): string {
+  const base = text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return base || `playlist-${Date.now()}`;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -65,10 +75,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nama playlist wajib diisi" }, { status: 400 });
     }
 
+    const baseSlug = slugify(name);
+    const uniqueSlug = `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`;
+
     const [newPlaylist] = await db
       .insert(playlists)
       .values({
         name,
+        slug: uniqueSlug,
         description: description || null,
         eventDate: eventDate || new Date().toISOString().split("T")[0],
       })
