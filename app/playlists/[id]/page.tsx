@@ -89,13 +89,6 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
   const songsList = playlist.playlistSongs ? playlist.playlistSongs.map((ps) => ps.song) : [];
   const currentSong = songsList[activeSongIndex];
 
-  const fontSizeClasses = {
-    sm: "text-sm leading-6",
-    base: "text-base leading-7",
-    lg: "text-lg leading-8 font-medium",
-    xl: "text-xl sm:text-2xl leading-9 font-semibold",
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
       {/* Top Banner (hidden in stage mode) */}
@@ -241,7 +234,7 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                         <LyricBlock
                           key={section.id}
                           section={section}
-                          fontSizeClass={fontSizeClasses[fontSize]}
+                          fontSizeClass="text-base leading-7"
                         />
                       ))}
                     </div>
