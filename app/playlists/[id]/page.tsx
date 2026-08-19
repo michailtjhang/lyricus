@@ -12,6 +12,8 @@ import {
   Edit3,
   Music,
   Tag as TagIcon,
+  Link2,
+  ArrowRight,
 } from "lucide-react";
 import LyricBlock from "@/components/LyricBlock";
 import SongFlow from "@/components/SongFlow";
@@ -90,6 +92,13 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
   const playlistItems = playlist.playlistSongs || [];
   const songsList = playlistItems.filter((ps) => ps.song).map((ps) => ps.song!);
   const currentSong = songsList[activeSongIndex];
+
+  const currentPlaylistItem = currentSong ? playlistItems.find((it) => it.songId === currentSong.id) : null;
+  const nextSong = activeSongIndex < songsList.length - 1 ? songsList[activeSongIndex + 1] : null;
+  const prevSong = activeSongIndex > 0 ? songsList[activeSongIndex - 1] : null;
+  const prevPlaylistItem = prevSong ? playlistItems.find((it) => it.songId === prevSong.id) : null;
+  const isCurrentMedley = Boolean(currentPlaylistItem?.isMedley);
+  const isPrevMedley = Boolean(prevPlaylistItem?.isMedley);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
@@ -182,36 +191,52 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                     const song = item.song;
                     const songIdx = songsList.findIndex((s) => s.id === song.id);
                     const isActive = activeSongIndex === songIdx;
+                    const isMedley = Boolean(item.isMedley);
 
                     return (
-                      <button
-                        key={item.id || song.id}
-                        onClick={() => setActiveSongIndex(songIdx)}
-                        className={`w-full text-left p-3 rounded-xl border transition-all duration-200 flex items-start gap-3 ${
-                          isActive
-                            ? "bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400/50"
-                            : "bg-slate-950/60 border-white/[0.06] text-slate-300 hover:bg-slate-800/80 hover:text-white"
-                        }`}
-                      >
-                        <span
-                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
-                            isActive ? "bg-white/20 text-white" : "bg-white/5 text-slate-400"
+                      <div key={item.id || song.id} className="space-y-1">
+                        <button
+                          onClick={() => setActiveSongIndex(songIdx)}
+                          className={`w-full text-left p-3 rounded-xl border transition-all duration-200 flex items-start gap-3 ${
+                            isActive
+                              ? "bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400/50"
+                              : "bg-slate-950/60 border-white/[0.06] text-slate-300 hover:bg-slate-800/80 hover:text-white"
                           }`}
                         >
-                          {songIdx + 1}
-                        </span>
-
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold truncate leading-tight">{song.title}</p>
-                          <p
-                            className={`text-[11px] truncate mt-0.5 ${
-                              isActive ? "text-indigo-100" : "text-slate-400"
+                          <span
+                            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                              isActive ? "bg-white/20 text-white" : "bg-white/5 text-slate-400"
                             }`}
                           >
-                            {song.artist}
-                          </p>
-                        </div>
-                      </button>
+                            {songIdx + 1}
+                          </span>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <p className="text-xs font-bold truncate leading-tight">{song.title}</p>
+                              {isMedley && (
+                                <span className="text-[9px] font-extrabold uppercase tracking-wider bg-purple-500/25 text-purple-300 px-1.5 py-0.5 rounded border border-purple-400/40 shrink-0 flex items-center gap-0.5 shadow-sm">
+                                  <Link2 className="h-2.5 w-2.5" /> MEDLEY
+                                </span>
+                              )}
+                            </div>
+                            <p
+                              className={`text-[11px] truncate mt-0.5 ${
+                                isActive ? "text-indigo-100" : "text-slate-400"
+                              }`}
+                            >
+                              {song.artist}
+                            </p>
+                          </div>
+                        </button>
+
+                        {/* Connector line for Medley */}
+                        {isMedley && (
+                          <div className="flex items-center justify-center py-0.5">
+                            <div className="h-2.5 border-l-2 border-dashed border-purple-400/70" />
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -222,6 +247,53 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
             <main className="flex-1 min-w-0">
               {currentSong && (
                 <div>
+                  {/* Medley Quick-Switch Banner (Next Medley Song) */}
+                  {isCurrentMedley && nextSong && (
+                    <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-indigo-950/90 via-purple-950/80 to-indigo-950/90 border border-indigo-400/40 shadow-xl mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 backdrop-blur-md animate-in fade-in">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shrink-0 shadow-inner">
+                          <Link2 className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-indigo-300 bg-indigo-500/25 px-2 py-0.5 rounded border border-indigo-400/35 mb-1">
+                            ⚡ MEDLEY AKTIF
+                          </span>
+                          <p className="text-xs font-semibold text-white">
+                            Lagu ini langsung di-medley ke: <span className="text-indigo-200 font-bold">{nextSong.title}</span> ({nextSong.artist})
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setActiveSongIndex(activeSongIndex + 1)}
+                        className="w-full sm:w-auto px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-1.5 transition-all shrink-0 hover:scale-105 active:scale-95 border border-indigo-400/30"
+                      >
+                        <span>Pindah ke Lirik {nextSong.title}</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Medley Quick-Back Banner */}
+                  {!isCurrentMedley && isPrevMedley && prevSong && (
+                    <div className="p-2.5 rounded-xl bg-slate-900/80 border border-purple-500/30 shadow-md mb-4 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[10px] font-bold uppercase text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded border border-purple-500/30 shrink-0 flex items-center gap-1">
+                          <Link2 className="h-3 w-3" /> MEDLEY DARI
+                        </span>
+                        <span className="text-xs text-slate-300 font-medium truncate">
+                          {prevSong.title} ({prevSong.artist})
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setActiveSongIndex(activeSongIndex - 1)}
+                        className="text-xs font-bold text-indigo-300 hover:text-white transition-colors shrink-0"
+                      >
+                        ← Kembali ke {prevSong.title}
+                      </button>
+                    </div>
+                  )}
+
                   {/* Current Song Card */}
                   <div className="rounded-2xl border border-white/[0.08] bg-slate-900/60 p-6 backdrop-blur-sm mb-6">
                     <div className="border-b border-white/[0.06] pb-4 mb-4">

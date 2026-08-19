@@ -66,6 +66,7 @@ export interface PlaylistSongItem {
   playlistId: string;
   songId?: string | null;
   headerLabel?: string | null;
+  isMedley?: boolean | null;
   orderIndex: number;
   song?: SongWithDetails | null;
 }

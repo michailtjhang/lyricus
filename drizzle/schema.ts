@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, integer, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, integer, text, timestamp, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // ─── songs ────────────────────────────────────────────────────────────────────
@@ -65,6 +65,7 @@ export const playlistSongs = pgTable("playlist_songs", {
   songId: uuid("song_id")
     .references(() => songs.id, { onDelete: "cascade" }), // null if standalone section header
   headerLabel: varchar("header_label", { length: 255 }), // e.g. "Perjamuan Kudus", "Altar Call"
+  isMedley: boolean("is_medley").default(false),
   orderIndex: integer("order_index").notNull(),
 });
 

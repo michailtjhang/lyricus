@@ -194,6 +194,7 @@ export async function PUT(
             playlistId: targetPlaylist.id,
             songId: it.songId || null,
             headerLabel: it.headerLabel || null,
+            isMedley: Boolean(it.isMedley),
             orderIndex: idx,
           }))
         );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Calendar, Save, Trash2, ArrowUp, ArrowDown, Loader2, Plus, Search, Music, Tag, Heading } from "lucide-react";
+import { X, Calendar, Save, Trash2, ArrowUp, ArrowDown, Loader2, Plus, Search, Music, Tag, Heading, Link2 } from "lucide-react";
 import type { PlaylistWithSongs, PlaylistSongItem, SongCard } from "@/types/song";
 import { getAuthHeaders } from "@/lib/auth";
 
@@ -13,6 +13,8 @@ interface EditPlaylistModalProps {
 const PRESET_HEADERS = [
   "Pujian",
   "Penyembahan",
+  "Medley Praise",
+  "Medley Worship",
   "Perjamuan Kudus",
   "Altar Call",
   "Persembahan",
@@ -149,6 +151,7 @@ export default function EditPlaylistModal({
           items: items.map((it) => ({
             songId: it.songId || null,
             headerLabel: it.headerLabel || null,
+            isMedley: Boolean(it.isMedley),
           })),
         }),
       });
@@ -401,9 +404,30 @@ export default function EditPlaylistModal({
                             />
                           </div>
                         ) : (
-                          <div className="truncate">
-                            <p className="text-xs font-semibold text-white truncate">{it.song?.title || "Lagu"}</p>
-                            <p className="text-[10px] text-slate-400 truncate">{it.song?.artist}</p>
+                          <div className="flex items-center justify-between flex-1 min-w-0 mr-2">
+                            <div className="truncate">
+                              <p className="text-xs font-semibold text-white truncate">{it.song?.title || "Lagu"}</p>
+                              <p className="text-[10px] text-slate-400 truncate">{it.song?.artist}</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setItems((prev) => {
+                                  const next = [...prev];
+                                  next[idx] = { ...next[idx], isMedley: !next[idx].isMedley };
+                                  return next;
+                                });
+                              }}
+                              className={`px-2 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1 border transition-all shrink-0 ml-2 ${
+                                it.isMedley
+                                  ? "bg-indigo-500/30 text-indigo-200 border-indigo-400/50 shadow-sm shadow-indigo-500/20"
+                                  : "bg-white/5 text-slate-400 border-white/10 hover:text-slate-200 hover:bg-white/10"
+                              }`}
+                              title="Tandai lagu ini di-Medley (langsung menyambung) dengan lagu berikutnya"
+                            >
+                              <Link2 className="h-3 w-3" />
+                              {it.isMedley ? "Medley ON" : "+ Medley"}
+                            </button>
                           </div>
                         )}
                       </div>
