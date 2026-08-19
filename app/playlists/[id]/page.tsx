@@ -224,19 +224,22 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                 <div>
                   {/* Current Song Card */}
                   <div className="rounded-2xl border border-white/[0.08] bg-slate-900/60 p-6 backdrop-blur-sm mb-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] pb-4 mb-4">
-                      <div className="w-full">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
-                          Lagu ke-{activeSongIndex + 1}
-                        </span>
-                        <div className="flex flex-wrap items-center justify-between gap-3 w-full">
-                          <div className="flex flex-wrap items-center gap-3">
-                            <h2 className="text-2xl sm:text-3xl font-bold text-white">{currentSong.title}</h2>
-                            <YouTubeButton youtubeUrl={currentSong.youtubeUrl} title={`${currentSong.title} - ${currentSong.artist}`} />
-                          </div>
-                          <CopyLyricsButton sections={currentSong.lyricSections || []} className="ml-auto" />
+                    <div className="border-b border-white/[0.06] pb-4 mb-4">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
+                        Lagu ke-{activeSongIndex + 1}
+                      </span>
+
+                      <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-1">{currentSong.title}</h2>
+                      <p className="text-sm text-slate-400 font-medium mb-3">{currentSong.artist}</p>
+
+                      {/* Dedicated Action Row: YouTube Button (left) + Copy Button (right) guaranteed in 1 row */}
+                      <div className="flex items-center justify-between gap-2 pt-1 w-full">
+                        <div className="flex items-center gap-2 shrink-0">
+                          <YouTubeButton youtubeUrl={currentSong.youtubeUrl} title={`${currentSong.title} - ${currentSong.artist}`} />
                         </div>
-                        <p className="text-sm text-slate-400 font-medium mt-0.5">{currentSong.artist}</p>
+                        <div className="shrink-0">
+                          <CopyLyricsButton sections={currentSong.lyricSections || []} />
+                        </div>
                       </div>
                     </div>
 

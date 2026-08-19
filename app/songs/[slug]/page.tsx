@@ -128,16 +128,20 @@ export default async function SongDetailPage({ params }: PageProps) {
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                    {song.title}
-                  </h1>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-1">
+                {song.title}
+              </h1>
+              <p className="text-white/75 text-lg font-medium mb-3">{song.artist}</p>
+
+              {/* Dedicated Action Row: YouTube Button (left) + Copy Button (right) guaranteed in 1 row */}
+              <div className="flex items-center justify-between gap-2 pt-1 w-full">
+                <div className="flex items-center gap-2 shrink-0">
                   <YouTubeButton youtubeUrl={song.youtubeUrl} title={`${song.title} - ${song.artist}`} />
                 </div>
-                <CopyLyricsButton sections={sortedSections} className="ml-auto" />
+                <div className="shrink-0">
+                  <CopyLyricsButton sections={sortedSections} />
+                </div>
               </div>
-              <p className="text-white/75 text-lg font-medium mb-1">{song.artist}</p>
 
               <SongDetailActions songId={song.id} songSlug={song.slug} songTitle={song.title} />
             </div>
