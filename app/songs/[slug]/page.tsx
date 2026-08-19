@@ -137,11 +137,9 @@ export default async function SongDetailPage({ params }: PageProps) {
                 </div>
                 <CopyLyricsButton sections={sortedSections} className="ml-auto" />
               </div>
-              <p className="text-white/75 text-lg font-medium mb-6">{song.artist}</p>
+              <p className="text-white/75 text-lg font-medium mb-1">{song.artist}</p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <SongDetailActions songId={song.id} songSlug={song.slug} songTitle={song.title} />
-              </div>
+              <SongDetailActions songId={song.id} songSlug={song.slug} songTitle={song.title} />
             </div>
           </div>
 

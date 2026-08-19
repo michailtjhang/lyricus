@@ -42,22 +42,22 @@ export default function CopyLyricsButton({
     <button
       type="button"
       onClick={handleCopy}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 shadow-md hover:scale-105 active:scale-95 border ${
+      className={`inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 shadow-lg hover:scale-105 active:scale-95 border ${
         copied
           ? "bg-emerald-500 text-white shadow-emerald-500/30 border-emerald-400/40"
-          : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30 border-indigo-400/30"
+          : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30 border-indigo-400/30 ring-1 ring-indigo-400/30"
       } ${className}`}
       title="Salin lirik lagu ini ke clipboard"
     >
       {copied ? (
         <>
-          <Check className="h-3.5 w-3.5 text-white" />
-          <span>Disalin!</span>
+          <Check className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-white animate-bounce" />
+          <span>Lirik Berhasil Disalin!</span>
         </>
       ) : (
         <>
-          <Copy className="h-3.5 w-3.5 text-indigo-200" />
-          <span>Salin Lirik</span>
+          <Copy className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-indigo-200" />
+          <span>Salin Lirik Lagu</span>
         </>
       )}
     </button>
