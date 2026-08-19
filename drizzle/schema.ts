@@ -11,6 +11,7 @@ export const songs = pgTable("songs", {
   releaseYear: integer("release_year"),
   key: varchar("key", { length: 10 }),
   tempo: integer("tempo"),
+  youtubeUrl: varchar("youtube_url", { length: 500 }),
   songFlow: text("song_flow").array().notNull().default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

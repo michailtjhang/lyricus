@@ -40,6 +40,7 @@ export default function EditSongPage({ params }: { params: Promise<{ slug: strin
 
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [songFlowInput, setSongFlowInput] = useState("");
   const [sections, setSections] = useState<EditableSection[]>([]);
@@ -56,6 +57,7 @@ export default function EditSongPage({ params }: { params: Promise<{ slug: strin
           const s = data.song;
           setTitle(s.title);
           setArtist(s.artist);
+          setYoutubeUrl(s.youtubeUrl || "");
           setSongFlowInput((s.songFlow || []).join(", "));
           setSelectedTags((s.tags || []).map((t: any) => t.name));
           setSections(
@@ -69,7 +71,6 @@ export default function EditSongPage({ params }: { params: Promise<{ slug: strin
         }
         setLoadingSong(false);
       })
-
       .catch((err) => {
         console.error(err);
         setLoadingSong(false);
@@ -157,11 +158,11 @@ export default function EditSongPage({ params }: { params: Promise<{ slug: strin
         body: JSON.stringify({
           title,
           artist,
+          youtubeUrl,
           songFlow: flowArray,
           sections,
           tagNames: selectedTags,
         }),
-
       });
 
       const data = await res.json();
@@ -223,7 +224,7 @@ export default function EditSongPage({ params }: { params: Promise<{ slug: strin
             </div>
             <h1 className="text-3xl font-bold text-white">Edit Lagu: {title}</h1>
             <p className="text-sm text-slate-400 mt-1">
-              Perbarui metadata, tags, alur lagu, dan lirik terstruktur.
+              Perbarui metadata, tags, link YouTube, alur lagu, dan lirik terstruktur.
             </p>
           </div>
 
@@ -279,9 +280,23 @@ export default function EditSongPage({ params }: { params: Promise<{ slug: strin
               </div>
             </div>
 
+            {/* YouTube Link Input */}
+            <div className="pt-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center gap-1.5">
+                <Music className="h-3.5 w-3.5 text-rose-400" />
+                Link Video / Audio YouTube (URL)
+              </label>
+              <input
+                type="url"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
+                className="w-full rounded-xl border border-white/[0.08] bg-slate-950 px-3.5 py-2 text-sm text-slate-100 outline-none focus:border-indigo-500"
+              />
+            </div>
 
             {/* Song Flow Input */}
-            <div className="pt-2">
+            <div className="pt-1">
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Alur Lagu (Urutan Menyanyi dipisah koma)
               </label>

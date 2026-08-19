@@ -9,6 +9,7 @@ import LyricBlock from "@/components/LyricBlock";
 import SongFlow from "@/components/SongFlow";
 import SongDetailActions from "@/components/SongDetailActions";
 import CopyLyricsButton from "@/components/CopyLyricsButton";
+import YouTubeButton from "@/components/YouTubeButton";
 import { TagBadge } from "@/components/SongCard";
 import type { SongWithDetails } from "@/types/song";
 
@@ -127,15 +128,18 @@ export default async function SongDetailPage({ params }: PageProps) {
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                  {song.title}
-                </h1>
-                <CopyLyricsButton sections={sortedSections} />
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                    {song.title}
+                  </h1>
+                  <YouTubeButton youtubeUrl={song.youtubeUrl} title={`${song.title} - ${song.artist}`} />
+                </div>
+                <CopyLyricsButton sections={sortedSections} className="ml-auto" />
               </div>
               <p className="text-white/75 text-lg font-medium mb-6">{song.artist}</p>
 
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <SongDetailActions songId={song.id} songSlug={song.slug} songTitle={song.title} />
               </div>
             </div>

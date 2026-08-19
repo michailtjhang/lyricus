@@ -38,6 +38,7 @@ export default function NewSongPage() {
   // Form states
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>(["Worship", "Indonesian"]);
   const [songFlowInput, setSongFlowInput] = useState("Verse 1, Pre-Chorus, Chorus, Bridge, Chorus");
   const [sections, setSections] = useState<EditableSection[]>([
@@ -128,14 +129,13 @@ export default function NewSongPage() {
           ...getAuthHeaders(),
         },
         body: JSON.stringify({
-
           title,
           artist,
+          youtubeUrl,
           songFlow: flowArray,
           sections,
           tagNames: selectedTags,
         }),
-
       });
 
       const data = await res.json();
@@ -170,7 +170,7 @@ export default function NewSongPage() {
           </div>
           <h1 className="text-3xl font-bold text-white">Tambah Lagu Baru</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Isi metadata lagu dan format lirik terstruktur dengan editor bold/italic.
+            Isi metadata lagu, link video YouTube, dan format lirik terstruktur.
           </p>
         </div>
 
@@ -217,9 +217,22 @@ export default function NewSongPage() {
               </div>
             </div>
 
+            {/* YouTube Link Input */}
+            <div className="pt-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Link Video / Audio YouTube (URL)
+              </label>
+              <input
+                type="url"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
+                className="w-full rounded-xl border border-white/[0.08] bg-slate-950 px-3.5 py-2 text-sm text-slate-100 outline-none focus:border-indigo-500"
+              />
+            </div>
 
             {/* Song Flow Input */}
-            <div className="pt-2">
+            <div className="pt-1">
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Alur Lagu (Urutan Menyanyi dipisah koma)
               </label>

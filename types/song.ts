@@ -37,6 +37,7 @@ export interface Song {
   releaseYear: number | null;
   key: string | null;
   tempo: number | null;
+  youtubeUrl?: string | null;
   songFlow: string[];
   createdAt: Date;
   updatedAt: Date;

@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
       releaseYear: s.releaseYear,
       key: s.key,
       tempo: s.tempo,
+      youtubeUrl: s.youtubeUrl,
       songFlow: s.songFlow,
       createdAt: s.createdAt,
       updatedAt: s.updatedAt,
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, artist, album, releaseYear, key, tempo, songFlow, sections, tagNames } = body;
+    const { title, artist, album, releaseYear, key, tempo, youtubeUrl, songFlow, sections, tagNames } = body;
 
     if (!title || !artist) {
       return NextResponse.json({ error: "Judul dan Artis wajib diisi" }, { status: 400 });
@@ -94,6 +95,7 @@ export async function POST(req: NextRequest) {
         releaseYear: releaseYear ? parseInt(releaseYear) : null,
         key: key || null,
         tempo: tempo ? parseInt(tempo) : null,
+        youtubeUrl: youtubeUrl || null,
         songFlow: Array.isArray(songFlow) ? songFlow : [],
       })
       .returning();

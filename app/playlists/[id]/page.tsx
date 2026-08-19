@@ -18,6 +18,7 @@ import SongFlow from "@/components/SongFlow";
 import EditPlaylistModal from "@/components/EditPlaylistModal";
 import AuthModal from "@/components/AuthModal";
 import CopyLyricsButton from "@/components/CopyLyricsButton";
+import YouTubeButton from "@/components/YouTubeButton";
 import { isClientAuthenticated } from "@/lib/auth";
 import type { PlaylistWithSongs, LyricSection } from "@/types/song";
 
@@ -224,13 +225,16 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                   {/* Current Song Card */}
                   <div className="rounded-2xl border border-white/[0.08] bg-slate-900/60 p-6 backdrop-blur-sm mb-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] pb-4 mb-4">
-                      <div>
+                      <div className="w-full">
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
                           Lagu ke-{activeSongIndex + 1}
                         </span>
-                        <div className="flex flex-wrap items-center gap-3">
-                          <h2 className="text-2xl sm:text-3xl font-bold text-white">{currentSong.title}</h2>
-                          <CopyLyricsButton sections={currentSong.lyricSections || []} />
+                        <div className="flex flex-wrap items-center justify-between gap-3 w-full">
+                          <div className="flex flex-wrap items-center gap-3">
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white">{currentSong.title}</h2>
+                            <YouTubeButton youtubeUrl={currentSong.youtubeUrl} title={`${currentSong.title} - ${currentSong.artist}`} />
+                          </div>
+                          <CopyLyricsButton sections={currentSong.lyricSections || []} className="ml-auto" />
                         </div>
                         <p className="text-sm text-slate-400 font-medium mt-0.5">{currentSong.artist}</p>
                       </div>

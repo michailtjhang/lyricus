@@ -56,7 +56,7 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { title, artist, album, releaseYear, key, tempo, songFlow, sections, tagNames } = body;
+    const { title, artist, album, releaseYear, key, tempo, youtubeUrl, songFlow, sections, tagNames } = body;
 
     // Update song record
     await db
@@ -68,6 +68,7 @@ export async function PUT(
         releaseYear: releaseYear !== undefined ? (releaseYear ? parseInt(releaseYear) : null) : existingSong.releaseYear,
         key: key !== undefined ? key : existingSong.key,
         tempo: tempo !== undefined ? (tempo ? parseInt(tempo) : null) : existingSong.tempo,
+        youtubeUrl: youtubeUrl !== undefined ? youtubeUrl : existingSong.youtubeUrl,
         songFlow: Array.isArray(songFlow) ? songFlow : existingSong.songFlow,
         updatedAt: new Date(),
       })
