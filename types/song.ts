@@ -63,9 +63,10 @@ export interface Playlist {
 export interface PlaylistSongItem {
   id: string;
   playlistId: string;
-  songId: string;
+  songId?: string | null;
+  headerLabel?: string | null;
   orderIndex: number;
-  song: SongWithDetails;
+  song?: SongWithDetails | null;
 }
 
 

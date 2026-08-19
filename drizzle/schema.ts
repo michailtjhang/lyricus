@@ -62,8 +62,8 @@ export const playlistSongs = pgTable("playlist_songs", {
     .notNull()
     .references(() => playlists.id, { onDelete: "cascade" }),
   songId: uuid("song_id")
-    .notNull()
-    .references(() => songs.id, { onDelete: "cascade" }),
+    .references(() => songs.id, { onDelete: "cascade" }), // null if standalone section header
+  headerLabel: varchar("header_label", { length: 255 }), // e.g. "Perjamuan Kudus", "Altar Call"
   orderIndex: integer("order_index").notNull(),
 });
 

@@ -37,10 +37,12 @@ export async function GET() {
         ...p,
         playlistSongs: p.playlistSongs.map((ps) => ({
           ...ps,
-          song: {
-            ...ps.song,
-            tags: ps.song.songTags.map((st) => st.tag),
-          },
+          song: ps.song
+            ? {
+                ...ps.song,
+                tags: ps.song.songTags ? ps.song.songTags.map((st) => st.tag) : [],
+              }
+            : null,
         })),
       }))
       .sort((a, b) => {

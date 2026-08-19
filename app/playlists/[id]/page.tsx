@@ -86,12 +86,12 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
     );
   }
 
-  const songsList = playlist.playlistSongs ? playlist.playlistSongs.map((ps) => ps.song) : [];
+  const playlistItems = playlist.playlistSongs || [];
+  const songsList = playlistItems.filter((ps) => ps.song).map((ps) => ps.song!);
   const currentSong = songsList[activeSongIndex];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
-      {/* Top Banner (hidden in stage mode) */}
       {/* Top Banner */}
       <div className="border-b border-white/[0.06] bg-slate-900/70 backdrop-blur-md sticky top-16 z-30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
@@ -135,13 +135,11 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
-
-
-      {/* Two Column Layout: Left (Song List Top-to-Bottom) + Right (Lyrics Content) */}
+      {/* Two Column Layout: Left (Setlist Songs & Headers) + Right (Lyrics Content) */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-        {songsList.length > 0 ? (
+        {playlistItems.length > 0 ? (
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Sidebar: Vertical Setlist Songs (Top to Bottom) */}
+            {/* Left Sidebar: Vertical Setlist Items (Headers & Songs) */}
             <aside className="w-full lg:w-72 shrink-0">
               <div className="sticky top-40 rounded-2xl border border-white/[0.08] bg-slate-900/60 p-4 space-y-3 backdrop-blur-sm">
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
@@ -159,18 +157,35 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                       Edit List
                     </button>
                   )}
-
                 </div>
 
-                {/* Vertical Songs List */}
+                {/* Vertical Songs & Headers List */}
                 <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-1">
-                  {songsList.map((song, idx) => {
-                    const isActive = activeSongIndex === idx;
+                  {playlistItems.map((item, idx) => {
+                    // Header / Pembatas Divider Item
+                    if (item.headerLabel || !item.song) {
+                      return (
+                        <div key={item.id || `hdr-${idx}`} className="pt-2 pb-1 text-center">
+                          <div className="flex items-center gap-2">
+                            <div className="h-[1px] flex-1 bg-amber-500/20" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20 shadow-sm">
+                              {item.headerLabel || "PEMBATAS"}
+                            </span>
+                            <div className="h-[1px] flex-1 bg-amber-500/20" />
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Song Item
+                    const song = item.song;
+                    const songIdx = songsList.findIndex((s) => s.id === song.id);
+                    const isActive = activeSongIndex === songIdx;
 
                     return (
                       <button
-                        key={song.id}
-                        onClick={() => setActiveSongIndex(idx)}
+                        key={item.id || song.id}
+                        onClick={() => setActiveSongIndex(songIdx)}
                         className={`w-full text-left p-3 rounded-xl border transition-all duration-200 flex items-start gap-3 ${
                           isActive
                             ? "bg-indigo-600 text-white border-indigo-400 shadow-lg shadow-indigo-600/30 ring-1 ring-indigo-400/50"
@@ -182,7 +197,7 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                             isActive ? "bg-white/20 text-white" : "bg-white/5 text-slate-400"
                           }`}
                         >
-                          {idx + 1}
+                          {songIdx + 1}
                         </span>
 
                         <div className="flex-1 min-w-0">

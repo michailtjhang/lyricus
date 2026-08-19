@@ -42,10 +42,12 @@ async function getPlaylists(): Promise<PlaylistWithSongs[]> {
         ...p,
         playlistSongs: p.playlistSongs.map((ps) => ({
           ...ps,
-          song: {
-            ...ps.song,
-            tags: ps.song.songTags.map((st) => st.tag),
-          },
+          song: ps.song
+            ? {
+                ...ps.song,
+                tags: ps.song.songTags ? ps.song.songTags.map((st) => st.tag) : [],
+              }
+            : null,
         })),
       }))
       .sort((a, b) => {
@@ -83,7 +85,9 @@ export default async function PlaylistsPage() {
         {/* Playlists Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {playlists.map((pl) => {
-            const songCount = pl.playlistSongs ? pl.playlistSongs.length : 0;
+            const songCount = pl.playlistSongs
+              ? pl.playlistSongs.filter((ps) => ps.songId).length
+              : 0;
 
             return (
               <Link
