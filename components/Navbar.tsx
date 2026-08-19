@@ -48,7 +48,7 @@ function NavbarContent() {
               <div className="relative h-8 w-8 overflow-hidden rounded-lg ring-1 ring-indigo-500/30 group-hover:ring-indigo-400/60 transition-all">
                 <Image src="/logo.png" alt="Lyricus Logo" fill className="object-cover" />
               </div>
-              <span className="text-lg font-bold tracking-tight text-white hidden sm:block">
+              <span className="text-lg font-bold tracking-tight text-white flex items-center">
                 Lyri<span className="text-indigo-400">cus</span>
               </span>
             </Link>

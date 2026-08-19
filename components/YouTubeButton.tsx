@@ -106,14 +106,15 @@ export default function YouTubeButton({
       </button>
 
       {/* Draggable Picture-in-Picture Mini Player */}
+      {/* Mobile: top-right so it won't cover lyrics. Desktop: bottom-right */}
       {isOpen && embedId && (
         <div
           style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
-          className="fixed bottom-16 sm:bottom-6 right-3 sm:right-6 z-50 transition-transform duration-75 max-w-[calc(100vw-1.5rem)] touch-none select-none"
+          className="fixed top-20 right-3 sm:top-auto sm:bottom-6 sm:right-6 z-50 transition-transform duration-75 touch-none select-none"
         >
           {isMinimized ? (
             /* Minimized Audio/Video Pill Bar (Draggable) */
-            <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-slate-900/95 border border-rose-500/40 shadow-2xl backdrop-blur-md">
+            <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-slate-900/95 border border-rose-500/40 shadow-2xl backdrop-blur-md max-w-[calc(100vw-1.5rem)]">
               <div
                 onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
                 onTouchStart={(e) => {
@@ -153,7 +154,7 @@ export default function YouTubeButton({
             </div>
           ) : (
             /* Expanded Floating 16:9 Mini Window (Draggable Header) */
-            <div className="w-[calc(100vw-1.5rem)] max-w-sm sm:w-96 rounded-2xl border border-rose-500/30 bg-slate-900/95 shadow-2xl backdrop-blur-xl overflow-hidden ring-1 ring-white/10">
+            <div className="w-64 sm:w-96 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-rose-500/30 bg-slate-900/95 shadow-2xl backdrop-blur-xl overflow-hidden ring-1 ring-white/10">
               {/* Mini Window Header Bar (Drag Handle) */}
               <div
                 onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}

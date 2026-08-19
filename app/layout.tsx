@@ -21,6 +21,11 @@ export const metadata: Metadata = {
   },
   description:
     "Lyricus adalah pustaka lirik lagu worship, praise, dan hymn interaktif. Temukan dan baca lirik lagu lengkap dengan nada dasar, tempo, dan alur lagu.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
