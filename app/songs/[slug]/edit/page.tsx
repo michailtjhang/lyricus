@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Save, Loader2, Music, Clock, Sparkles, Trash2 } from "lucide-react";
 import WysiwygEditor, { EditableSection } from "@/components/WysiwygEditor";
@@ -24,9 +24,9 @@ const AVAILABLE_TAGS = [
   { name: "Christmas", category: "THEME" },
 ];
 
-export default function EditSongPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = use(params);
-  const { slug } = resolvedParams;
+export default function EditSongPage() {
+  const routeParams = useParams();
+  const slug = typeof routeParams?.slug === "string" ? routeParams.slug : Array.isArray(routeParams?.slug) ? routeParams.slug[0] : "";
   const router = useRouter();
 
   const [authModalOpen, setAuthModalOpen] = useState(false);

@@ -28,21 +28,19 @@ export default function YouTubeButton({
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   // Dragging state for mobile & desktop
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  if (!youtubeUrl || !youtubeUrl.trim()) return null;
-
-  const embedId = getYouTubeEmbedId(youtubeUrl);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (!youtubeUrl) return;
+    const embedId = getYouTubeEmbedId(youtubeUrl);
     if (embedId) {
       setIsOpen(true);
       setIsMinimized(false);
@@ -96,6 +94,11 @@ export default function YouTubeButton({
       window.removeEventListener("touchend", onTouchEnd);
     };
   }, [isDragging, dragStart]);
+
+  // Early return after ALL hooks to strictly satisfy React Rules of Hooks
+  if (!youtubeUrl || typeof youtubeUrl !== "string" || !youtubeUrl.trim()) return null;
+
+  const embedId = getYouTubeEmbedId(youtubeUrl);
 
   return (
     <>
@@ -158,35 +161,32 @@ export default function YouTubeButton({
               </div>
             </div>
           ) : (
-            /* Expanded Floating 16:9 Mini Window (Draggable Header) */
-            <div className="w-64 sm:w-96 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-rose-500/30 bg-slate-900/95 shadow-2xl backdrop-blur-xl overflow-hidden ring-1 ring-white/10">
-              {/* Mini Window Header Bar (Drag Handle) */}
+            /* Floating Card Video Player (Draggable) */
+            <div className="w-[300px] sm:w-[360px] md:w-[420px] rounded-2xl bg-slate-900/95 border border-rose-500/40 shadow-2xl overflow-hidden backdrop-blur-md">
+              {/* Drag Header Bar */}
               <div
                 onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
                 onTouchStart={(e) => {
                   if (e.touches.length > 0) handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
                 }}
-                className="flex items-center justify-between px-3.5 py-2.5 border-b border-white/10 bg-slate-950/80 cursor-grab active:cursor-grabbing"
-                title="Tahan & Geser posisi player di mana saja"
+                className="flex items-center justify-between px-3.5 py-2.5 bg-slate-950/80 border-b border-white/10 cursor-grab active:cursor-grabbing select-none"
+                title="Tahan & Geser posisi player"
               >
-                <div className="flex items-center gap-2 min-w-0 pr-2">
+                <div className="flex items-center gap-2 min-w-0">
                   <Move className="h-3.5 w-3.5 text-rose-400 shrink-0" />
-                  <Play className="h-3.5 w-3.5 text-rose-500 fill-current shrink-0" />
-                  <span className="text-xs font-bold text-white truncate">{title}</span>
+                  <span className="text-xs font-semibold text-white truncate">{title}</span>
                 </div>
-
-                <div className="flex items-center gap-1 shrink-0" onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-1 shrink-0">
                   <button
                     type="button"
                     onClick={() => setIsMinimized(true)}
                     className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                    title="Kecilkan Player"
+                    title="Kecilkan Player (Sembunyikan Video)"
                   >
                     <Minimize2 className="h-3.5 w-3.5" />
                   </button>
-
                   <a
-                    href={`https://www.youtube.com/watch?v=${embedId}`}
+                    href={youtubeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
@@ -194,19 +194,18 @@ export default function YouTubeButton({
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
-
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
                     className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                     title="Tutup Player"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
 
-              {/* Responsive Iframe Video Container */}
+              {/* YouTube Iframe Embed */}
               <div className="relative w-full aspect-video bg-black">
                 <iframe
                   src={`https://www.youtube.com/embed/${embedId}?autoplay=1&rel=0`}

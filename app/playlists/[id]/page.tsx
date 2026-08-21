@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -25,9 +26,9 @@ import { isClientAuthenticated } from "@/lib/auth";
 import type { PlaylistWithSongs, LyricSection } from "@/types/song";
 
 
-export default function PlaylistDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
-  const { id } = resolvedParams;
+export default function PlaylistDetailPage() {
+  const routeParams = useParams();
+  const id = typeof routeParams?.id === "string" ? routeParams.id : Array.isArray(routeParams?.id) ? routeParams.id[0] : "";
 
   const [playlist, setPlaylist] = useState<PlaylistWithSongs | null>(null);
   const [loading, setLoading] = useState(true);
