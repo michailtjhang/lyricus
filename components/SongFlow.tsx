@@ -25,10 +25,14 @@ export default function SongFlow({ flow, sections }: SongFlowProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const getSectionType = (label: string): string => {
-    const found = sections.find(
-      (s) => s.sectionLabel.toLowerCase() === label.toLowerCase()
-    );
-    return found?.sectionType || "VERSE";
+    if (!label || !Array.isArray(sections)) return "VERSE";
+    const cleanLabel = label.replace(/\s*\(\d+x\)/gi, "").trim().toLowerCase();
+    const found = sections.find((s) => {
+      const sLabel = (s?.sectionLabel || "").toLowerCase().trim();
+      return sLabel === cleanLabel || sLabel.startsWith(cleanLabel);
+    });
+    const typeUpper = (found?.sectionType || "VERSE").toUpperCase();
+    return typeUpper;
   };
 
   return (

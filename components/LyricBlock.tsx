@@ -96,20 +96,24 @@ export default function LyricBlock({
   section: LyricSection;
   fontSizeClass?: string;
 }) {
-  const config = SECTION_CONFIG[section.sectionType] || SECTION_CONFIG["VERSE"];
-  const lines = section.content.split("\n");
-  const isInstrumental = section.content.trim() === "(Instrumental)";
+  const sectionTypeKey = (section?.sectionType || "VERSE").toUpperCase();
+  const config = SECTION_CONFIG[sectionTypeKey] || SECTION_CONFIG["VERSE"];
+  const rawContent = section?.content || "";
+  const lines = rawContent.split("\n");
+  const isInstrumental = rawContent.trim() === "(Instrumental)";
+  const labelText = section?.sectionLabel || "Verse";
+  const sectionId = `section-${labelText.toLowerCase().replace(/\s+/g, "-")}`;
 
   return (
     <div
       className={`relative rounded-2xl border bg-slate-900/40 backdrop-blur-sm p-5 pt-4 group hover:bg-slate-800/50 transition-colors duration-200 ${config.borderClass}`}
-      id={`section-${section.sectionLabel.toLowerCase().replace(/\s+/g, "-")}`}
+      id={sectionId}
     >
       {/* Section badge at top-left */}
       <div className="flex items-center gap-2 mb-3">
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border uppercase tracking-wider ${config.badgeClass}`}>
           <span className={`h-1.5 w-1.5 rounded-full ${config.dotClass}`} />
-          {section.sectionLabel}
+          {labelText}
         </span>
       </div>
 

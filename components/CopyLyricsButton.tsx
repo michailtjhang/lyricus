@@ -18,14 +18,14 @@ export default function CopyLyricsButton({
   const handleCopy = async () => {
     if (!sections || sections.length === 0) return;
 
-    const sorted = [...sections].sort((a, b) => a.orderIndex - b.orderIndex);
+    const sorted = [...sections].sort((a, b) => (a?.orderIndex || 0) - (b?.orderIndex || 0));
 
     const formattedText = sorted
       .map((sec) => {
-        const cleanContent = sec.content
+        const cleanContent = (sec?.content || "")
           .replace(/\*\*/g, "")
           .replace(/\*/g, "");
-        return `[${sec.sectionLabel}]\n${cleanContent}`;
+        return `[${sec?.sectionLabel || "Section"}]\n${cleanContent}`;
       })
       .join("\n\n");
 
