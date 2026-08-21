@@ -7,10 +7,10 @@ import { tags } from "@/drizzle/schema";
 import SongCard from "@/components/SongCard";
 import TagFilter from "@/components/TagFilter";
 import type { SongCard as SongCardType, Tag } from "@/types/song";
-import { Search, Sparkles, Library } from "lucide-react";
+import { Search, Sparkles, Library, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; tag?: string; sort?: string }>;
+  searchParams: Promise<{ q?: string; tag?: string; sort?: string; page?: string }>;
 }
 
 import { songs as songsTable } from "@/drizzle/schema";
@@ -67,7 +67,7 @@ async function getAllTags(): Promise<Tag[]> {
 
 export default async function HomePage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const { q, tag, sort } = params;
+  const { q, tag, sort, page: pageStr } = params;
 
   const [songsList, allTags] = await Promise.all([
     getSongs(q, tag, sort),
@@ -75,6 +75,25 @@ export default async function HomePage({ searchParams }: PageProps) {
   ]);
 
   const isFiltered = !!(q || tag);
+
+  // Pagination calculation
+  const pageParam = parseInt(pageStr || "1", 10);
+  const currentPage = Math.max(1, isNaN(pageParam) ? 1 : pageParam);
+  const ITEMS_PER_PAGE = 12;
+  const totalSongs = songsList.length;
+  const totalPages = Math.max(1, Math.ceil(totalSongs / ITEMS_PER_PAGE));
+  const validPage = Math.min(currentPage, totalPages);
+  const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
+  const displayedSongs = songsList.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const getPageUrl = (pageNum: number) => {
+    const p = new URLSearchParams();
+    if (q) p.set("q", q);
+    if (tag) p.set("tag", tag);
+    if (sort) p.set("sort", sort);
+    p.set("page", pageNum.toString());
+    return `/?${p.toString()}`;
+  };
 
   return (
     <div className="hero-gradient min-h-screen">
@@ -93,8 +112,7 @@ export default async function HomePage({ searchParams }: PageProps) {
               <span className="text-white">Favoritmu</span>
             </h1>
             <p className="text-slate-400 text-lg max-w-xl mx-auto leading-relaxed">
-              Koleksi lirik worship, praise, dan hymn lengkap dengan nada dasar,
-              tempo, dan alur lagu terstruktur.
+              Koleksi lirik worship, praise, dan hymn lengkap dengan nada dasar, tempo, dan alur lagu terstruktur.
             </p>
           </div>
         )}
@@ -168,12 +186,77 @@ export default async function HomePage({ searchParams }: PageProps) {
             </div>
 
             {/* Song Grid */}
-            {songsList.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {songsList.map((song) => (
-                  <SongCard key={song.id} song={song} />
-                ))}
-              </div>
+            {displayedSongs.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {displayedSongs.map((song) => (
+                    <SongCard key={song.id} song={song} />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-white/[0.06]">
+                    <p className="text-xs text-slate-500">
+                      Menampilkan <span className="font-bold text-white">{startIndex + 1}</span>–
+                      <span className="font-bold text-white">{Math.min(startIndex + ITEMS_PER_PAGE, totalSongs)}</span> dari{" "}
+                      <span className="font-bold text-white">{totalSongs}</span> lagu
+                    </p>
+
+                    <div className="flex items-center gap-1.5">
+                      {/* Previous Button */}
+                      {validPage > 1 ? (
+                        <a
+                          href={getPageUrl(validPage - 1)}
+                          className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white hover:border-white/20 transition-all flex items-center gap-1"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          <span className="hidden sm:inline">Sebelumnya</span>
+                        </a>
+                      ) : (
+                        <span className="px-3 py-1.5 rounded-xl bg-slate-900/40 border border-white/5 text-xs font-semibold text-slate-600 flex items-center gap-1 cursor-not-allowed">
+                          <ChevronLeft className="h-4 w-4" />
+                          <span className="hidden sm:inline">Sebelumnya</span>
+                        </span>
+                      )}
+
+                      {/* Page Numbers */}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                        const isCurrent = pageNum === validPage;
+                        return (
+                          <a
+                            key={pageNum}
+                            href={getPageUrl(pageNum)}
+                            className={`h-8 w-8 rounded-xl text-xs font-bold flex items-center justify-center transition-all ${
+                              isCurrent
+                                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-1 ring-indigo-400/50"
+                                : "bg-slate-900 border border-white/10 text-slate-400 hover:text-white hover:bg-slate-800"
+                            }`}
+                          >
+                            {pageNum}
+                          </a>
+                        );
+                      })}
+
+                      {/* Next Button */}
+                      {validPage < totalPages ? (
+                        <a
+                          href={getPageUrl(validPage + 1)}
+                          className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30 transition-all flex items-center gap-1"
+                        >
+                          <span className="hidden sm:inline">Berikutnya</span>
+                          <ChevronRight className="h-4 w-4" />
+                        </a>
+                      ) : (
+                        <span className="px-3 py-1.5 rounded-xl bg-slate-900/40 border border-white/5 text-xs font-semibold text-slate-600 flex items-center gap-1 cursor-not-allowed">
+                          <span className="hidden sm:inline">Berikutnya</span>
+                          <ChevronRight className="h-4 w-4" />
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="h-16 w-16 rounded-full bg-slate-800/60 flex items-center justify-center mb-4">

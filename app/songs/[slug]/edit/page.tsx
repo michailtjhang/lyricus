@@ -19,6 +19,7 @@ const AVAILABLE_TAGS = [
   { name: "Slow", category: "THEME" },
   { name: "Upbeat", category: "THEME" },
   { name: "Acoustic", category: "THEME" },
+  { name: "Holy Communion", category: "THEME" },
   { name: "Easter", category: "THEME" },
   { name: "Christmas", category: "THEME" },
 ];

@@ -25,6 +25,7 @@ const SECTION_TYPES: { type: SectionType; label: string }[] = [
   { type: "VERSE", label: "Verse" },
   { type: "PRE_CHORUS", label: "Pre-Chorus" },
   { type: "CHORUS", label: "Chorus" },
+  { type: "POST_CHORUS", label: "Post-Chorus" },
   { type: "BRIDGE", label: "Bridge" },
   { type: "INTRO", label: "Intro" },
   { type: "INTERLUDE", label: "Interlude" },

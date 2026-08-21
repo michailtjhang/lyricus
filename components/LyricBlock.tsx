@@ -25,6 +25,12 @@ const SECTION_CONFIG: Record<string, { label: string; badgeClass: string; border
     borderClass: "border-sky-500/20",
     dotClass: "bg-sky-500",
   },
+  POST_CHORUS: {
+    label: "Post-Chorus",
+    badgeClass: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+    borderClass: "border-cyan-500/20",
+    dotClass: "bg-cyan-500",
+  },
   BRIDGE: {
     label: "Bridge",
     badgeClass: "bg-amber-500/20 text-amber-300 border-amber-500/30",

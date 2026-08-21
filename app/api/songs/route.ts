@@ -7,6 +7,8 @@ export async function GET(req: NextRequest) {
   const q = searchParams.get("q") || "";
   const tag = searchParams.get("tag") || "";
   const sort = searchParams.get("sort") || "recent";
+  const pageParam = searchParams.get("page");
+  const limitParam = searchParams.get("limit");
 
   try {
     // Build base query with relations
@@ -37,7 +39,7 @@ export async function GET(req: NextRequest) {
     // Filter by tag
     if (tag) {
       songResults = songResults.filter((s) =>
-        s.songTags.some((st) => st.tag.name === tag)
+        s.songTags.some((st) => st.tag.name.toLowerCase() === tag.toLowerCase())
       );
     }
 
@@ -58,7 +60,26 @@ export async function GET(req: NextRequest) {
       tags: s.songTags.map((st) => st.tag),
     }));
 
-    return NextResponse.json({ songs: formatted, total: formatted.length });
+    const total = formatted.length;
+
+    // Apply optional pagination if page param is present
+    if (pageParam) {
+      const page = Math.max(1, parseInt(pageParam) || 1);
+      const limit = Math.max(1, parseInt(limitParam || "12") || 12);
+      const totalPages = Math.max(1, Math.ceil(total / limit));
+      const startIndex = (page - 1) * limit;
+      const paginated = formatted.slice(startIndex, startIndex + limit);
+
+      return NextResponse.json({
+        songs: paginated,
+        total,
+        page,
+        totalPages,
+        limit,
+      });
+    }
+
+    return NextResponse.json({ songs: formatted, total });
   } catch (error) {
     console.error("Error fetching songs:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

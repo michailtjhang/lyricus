@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Play, X, ExternalLink, Minimize2, Maximize2, Move } from "lucide-react";
 
 interface YouTubeButtonProps {
@@ -25,6 +26,11 @@ export default function YouTubeButton({
 }: YouTubeButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Dragging state for mobile & desktop
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -105,12 +111,11 @@ export default function YouTubeButton({
         <span className="whitespace-nowrap">{isOpen ? "Video Aktif" : compact ? "Putar YouTube" : "Tonton YouTube"}</span>
       </button>
 
-      {/* Draggable Picture-in-Picture Mini Player */}
-      {/* Mobile: top-right so it won't cover lyrics. Desktop: bottom-right */}
-      {isOpen && embedId && (
+      {/* Draggable Picture-in-Picture Mini Player (Portal to body for viewport fixed positioning) */}
+      {isOpen && embedId && isMounted && createPortal(
         <div
           style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
-          className="fixed top-20 right-3 sm:top-auto sm:bottom-6 sm:right-6 z-50 transition-transform duration-75 touch-none select-none"
+          className="fixed top-20 right-3 sm:top-auto sm:bottom-6 sm:right-6 z-[9999] transition-transform duration-75 touch-none select-none"
         >
           {isMinimized ? (
             /* Minimized Audio/Video Pill Bar (Draggable) */
@@ -213,7 +218,8 @@ export default function YouTubeButton({
               </div>
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

@@ -5,6 +5,7 @@ export type SectionType =
   | "VERSE"
   | "PRE_CHORUS"
   | "CHORUS"
+  | "POST_CHORUS"
   | "BRIDGE"
   | "INTERLUDE"
   | "OUTRO"

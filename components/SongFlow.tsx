@@ -8,6 +8,7 @@ const SECTION_COLORS: Record<string, string> = {
   VERSE: "bg-indigo-500/20 text-indigo-200 border-indigo-500/30",
   PRE_CHORUS: "bg-violet-500/20 text-violet-200 border-violet-500/30",
   CHORUS: "bg-sky-500/20 text-sky-200 border-sky-500/30",
+  POST_CHORUS: "bg-cyan-500/20 text-cyan-200 border-cyan-500/30",
   BRIDGE: "bg-amber-500/20 text-amber-200 border-amber-500/30",
   INTERLUDE: "bg-slate-700/60 text-slate-300 border-slate-600/40",
   OUTRO: "bg-rose-500/20 text-rose-200 border-rose-500/30",
