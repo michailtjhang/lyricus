@@ -8,6 +8,7 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Loader2,
   ListMusic,
   Edit3,
@@ -37,6 +38,7 @@ export default function PlaylistDetailPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [setlistOpen, setSetlistOpen] = useState(false);
 
   useEffect(() => {
     setAuthenticated(isClientAuthenticated());
@@ -105,43 +107,46 @@ export default function PlaylistDetailPage() {
   let songCounter = 0;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
-      {/* Top Banner */}
+    <div className="min-h-screen bg-slate-950 text-slate-100 pb-16 sm:pb-20">
+      {/* Top Banner — compact on mobile */}
       <div className="border-b border-white/[0.06] bg-slate-900/70 backdrop-blur-md sticky top-16 z-30">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-2.5 sm:py-5">
           <Link
             href="/playlists"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white mb-3 transition-colors"
+            className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-slate-400 hover:text-white mb-1.5 sm:mb-3 transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Kembali ke Playlist
+            <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Kembali ke Playlist</span>
+            <span className="sm:hidden">Kembali</span>
           </Link>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <ListMusic className="h-5 w-5 text-indigo-400" />
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">{playlist.name}</h1>
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <ListMusic className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-400 shrink-0" />
+                <h1 className="text-base sm:text-2xl lg:text-3xl font-bold text-white truncate">{playlist.name}</h1>
               </div>
-              <div className="flex items-center gap-4 text-xs text-slate-400">
+              <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-slate-400 mt-0.5">
                 {playlist.eventDate && (
                   <span className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5 text-indigo-400" />
-                    Tanggal Ibadah: <span className="text-white font-semibold">{playlist.eventDate}</span>
+                    <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-indigo-400" />
+                    <span className="hidden sm:inline">Tanggal Ibadah: </span>
+                    <span className="text-white font-semibold">{playlist.eventDate}</span>
                   </span>
                 )}
                 <span>• {songsList.length} Lagu</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               {authenticated && (
                 <button
                   onClick={handleOpenEditPlaylist}
-                  className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+                  className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-all"
                 >
-                  <Edit3 className="h-4 w-4 text-amber-300" />
-                  Edit Playlist & Tanggal
+                  <Edit3 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-300" />
+                  <span className="hidden sm:inline">Edit Playlist & Tanggal</span>
+                  <span className="sm:hidden">Edit</span>
                 </button>
               )}
             </div>
@@ -150,12 +155,92 @@ export default function PlaylistDetailPage() {
       </div>
 
       {/* Two Column Layout: Left (Setlist Songs & Headers) + Right (Lyrics Content) */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
         {playlistItems.length > 0 ? (
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Sidebar: Vertical Setlist Items (Headers & Songs) */}
             <aside className="w-full lg:w-72 shrink-0">
-              <div className="sticky top-40 rounded-2xl border border-white/[0.08] bg-slate-900/60 p-4 space-y-3 backdrop-blur-sm">
+              {/* Mobile: Collapsible accordion */}
+              <div className="lg:hidden rounded-xl border border-white/[0.08] bg-slate-900/60 backdrop-blur-sm overflow-hidden">
+                <button
+                  onClick={() => setSetlistOpen(!setlistOpen)}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <ListMusic className="h-3.5 w-3.5 text-indigo-400" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
+                      Setlist ({songsList.length})
+                    </span>
+                    {currentSong && (
+                      <span className="text-[10px] text-slate-500 font-medium truncate max-w-[140px]">
+                        — {currentSong.title}
+                      </span>
+                    )}
+                  </div>
+                  <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${setlistOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {setlistOpen && (
+                  <div className="border-t border-white/[0.06] px-3 py-2.5 space-y-1.5 max-h-[50vh] overflow-y-auto">
+                    {playlistItems.map((item, idx) => {
+                      if (item.headerLabel || !item.song) {
+                        return (
+                          <div key={item.id || `m-hdr-${idx}`} className="py-1 text-center">
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-[1px] flex-1 bg-amber-500/20" />
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                                {item.headerLabel || "PEMBATAS"}
+                              </span>
+                              <div className="h-[1px] flex-1 bg-amber-500/20" />
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      const song = item.song;
+                      const mSongIdx = songsList.findIndex((s) => s.id === song.id);
+                      const isActive = validActiveIndex === mSongIdx;
+                      const isMedley = Boolean(item.isMedley);
+
+                      return (
+                        <div key={item.id || `m-song-${idx}`}>
+                          <button
+                            onClick={() => { setActiveSongIndex(mSongIdx); setSetlistOpen(false); }}
+                            className={`w-full text-left px-2.5 py-2 rounded-lg border flex items-center gap-2.5 transition-all ${
+                              isActive
+                                ? "bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/20"
+                                : "bg-slate-950/40 border-white/[0.04] text-slate-300 hover:bg-slate-800/60"
+                            }`}
+                          >
+                            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-bold ${
+                              isActive ? "bg-white/20 text-white" : "bg-white/5 text-slate-500"
+                            }`}>
+                              {mSongIdx + 1}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[11px] font-bold truncate leading-tight">{song.title}</p>
+                              <p className={`text-[10px] truncate ${isActive ? "text-indigo-200" : "text-slate-500"}`}>{song.artist}</p>
+                            </div>
+                            {isMedley && (
+                              <span className="text-[8px] font-extrabold uppercase bg-purple-500/25 text-purple-300 px-1 py-0.5 rounded border border-purple-400/40 shrink-0">
+                                <Link2 className="h-2 w-2 inline" /> M
+                              </span>
+                            )}
+                          </button>
+                          {isMedley && (
+                            <div className="flex justify-center py-0.5">
+                              <div className="h-2 border-l-2 border-dashed border-purple-400/50" />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop: Full sticky sidebar (unchanged) */}
+              <div className="hidden lg:block sticky top-40 rounded-2xl border border-white/[0.08] bg-slate-900/60 p-4 space-y-3 backdrop-blur-sm">
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
                   <div className="flex items-center gap-2">
                     <ListMusic className="h-4 w-4 text-indigo-400" />
@@ -176,7 +261,6 @@ export default function PlaylistDetailPage() {
                 {/* Vertical Songs & Headers List */}
                 <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-1">
                   {playlistItems.map((item, idx) => {
-                    // Header / Pembatas Divider Item
                     if (item.headerLabel || !item.song) {
                       return (
                         <div key={item.id || `hdr-${idx}`} className="pt-2 pb-1 text-center">
@@ -191,7 +275,6 @@ export default function PlaylistDetailPage() {
                       );
                     }
 
-                    // Song Item
                     const song = item.song;
                     const thisSongIndex = songCounter++;
                     const isActive = validActiveIndex === thisSongIndex;
@@ -298,20 +381,20 @@ export default function PlaylistDetailPage() {
                     </div>
                   )}
 
-                  {/* Current Song Card */}
-                  <div className="rounded-2xl border border-white/[0.08] bg-slate-900/60 p-6 backdrop-blur-sm mb-6">
-                    <div className="border-b border-white/[0.06] pb-4 mb-4">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-2">
+                  {/* Current Song Card — compact on mobile */}
+                  <div className="rounded-xl sm:rounded-2xl border border-white/[0.08] bg-slate-900/60 p-3.5 sm:p-6 backdrop-blur-sm mb-4 sm:mb-6">
+                    <div className="border-b border-white/[0.06] pb-3 sm:pb-4 mb-3 sm:mb-4">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] sm:text-[11px] font-bold mb-1.5 sm:mb-2">
                         Lagu ke-{validActiveIndex + 1}
                       </span>
 
-                      <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-1">{currentSong.title}</h2>
-                      <p className="text-sm text-slate-400 font-medium mb-3">{currentSong.artist}</p>
+                      <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-white leading-tight mb-0.5 sm:mb-1">{currentSong.title}</h2>
+                      <p className="text-xs sm:text-sm text-slate-400 font-medium mb-2 sm:mb-3">{currentSong.artist}</p>
 
                       {/* Dedicated Action Row: YouTube Button (left) + Copy Button (right) guaranteed in 1 row */}
-                      <div className="flex items-center justify-between gap-2 pt-1 w-full">
+                      <div className="flex items-center justify-between gap-2 pt-0.5 sm:pt-1 w-full">
                         <div className="flex items-center gap-2 shrink-0">
-                          <YouTubeButton youtubeUrl={currentSong.youtubeUrl} title={`${currentSong.title} - ${currentSong.artist}`} />
+                          <YouTubeButton youtubeUrl={currentSong.youtubeUrl} title={`${currentSong.title} - ${currentSong.artist}`} compact />
                         </div>
                         <div className="shrink-0">
                           <CopyLyricsButton sections={currentSong.lyricSections || []} />
@@ -319,10 +402,12 @@ export default function PlaylistDetailPage() {
                       </div>
                     </div>
 
-                    {/* Song Flow */}
-                    {currentSong.songFlow && currentSong.songFlow.length > 0 && (
-                      <SongFlow flow={currentSong.songFlow} sections={currentSong.lyricSections || []} />
-                    )}
+                    {/* Song Flow — hidden on mobile (shown in bottom bar instead) */}
+                    <div className="hidden sm:block">
+                      {currentSong.songFlow && currentSong.songFlow.length > 0 && (
+                        <SongFlow flow={currentSong.songFlow} sections={currentSong.lyricSections || []} />
+                      )}
+                    </div>
                   </div>
 
                   {/* Lyric Blocks Display */}
@@ -338,22 +423,28 @@ export default function PlaylistDetailPage() {
                     </div>
                   )}
 
-                  {/* Prev / Next Song Navigation */}
-                  <div className="flex items-center justify-between mt-10 pt-6 border-t border-white/[0.06]">
+                  {/* Prev / Next Song Navigation — compact on mobile */}
+                  <div className="flex items-center justify-between mt-6 sm:mt-10 pt-4 sm:pt-6 border-t border-white/[0.06]">
                     <button
                       disabled={validActiveIndex === 0}
                       onClick={() => setActiveSongIndex((prev) => Math.max(0, prev - 1))}
-                      className="px-4 py-2 rounded-xl bg-slate-900 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1"
+                      className="px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-slate-900 border border-white/10 text-[11px] sm:text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1"
                     >
-                      <ChevronLeft className="h-4 w-4" /> Lagu Sebelumnya
+                      <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <span className="hidden sm:inline">Lagu Sebelumnya</span>
+                      <span className="sm:hidden">Sebelumnya</span>
                     </button>
+
+                    <span className="text-[10px] text-slate-500 font-bold">{validActiveIndex + 1} / {songsList.length}</span>
 
                     <button
                       disabled={validActiveIndex === songsList.length - 1}
                       onClick={() => setActiveSongIndex((prev) => Math.min(songsList.length - 1, prev + 1))}
-                      className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 shadow-md shadow-indigo-600/30"
+                      className="px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] sm:text-xs font-semibold disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 shadow-md shadow-indigo-600/30"
                     >
-                      Lagu Berikutnya <ChevronRight className="h-4 w-4" />
+                      <span className="hidden sm:inline">Lagu Berikutnya</span>
+                      <span className="sm:hidden">Berikutnya</span>
+                      <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </button>
                   </div>
                 </div>
@@ -401,15 +492,15 @@ export default function PlaylistDetailPage() {
         };
 
         return (
-          <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-t border-white/10 px-3 py-2.5 shadow-2xl max-h-[40vh] overflow-y-auto">
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-t border-white/10 px-2.5 sm:px-3 py-1.5 sm:py-2.5 shadow-2xl max-h-[25vh] sm:max-h-[35vh] overflow-y-auto">
             <div className="mx-auto max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl">
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mb-1.5 text-center">Alur Lagu</p>
-              <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-slate-500 font-semibold mb-1 sm:mb-1.5 text-center">Alur Lagu</p>
+              <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5">
                 {currentSong.songFlow.map((flowLabel: string, idx: number) => (
                   <a
                     key={`${flowLabel}-${idx}`}
                     href={`#section-${flowLabel.toLowerCase().replace(/\s+/g, "-")}`}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border whitespace-nowrap transition-all hover:scale-105 hover:shadow-md ${getPillColor(flowLabel)}`}
+                    className={`px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-[9px] sm:text-[11px] font-bold uppercase tracking-wider border whitespace-nowrap transition-all hover:scale-105 hover:shadow-md ${getPillColor(flowLabel)}`}
                   >
                     {flowLabel}
                   </a>
